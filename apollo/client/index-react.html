@@ -1,5 +1,7 @@
 <html>
     <head>
+        <!-- Latest compiled and minified CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
         <script src="https://unpkg.com/react@15/dist/react.js"></script>
         <script src="https://unpkg.com/react-dom@15/dist/react-dom.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.24/browser.js"></script>
@@ -9,8 +11,51 @@
     </body>
 
     <script type="text/babel">
+        class ProteinEmbed extends React.Component{
+            constructor(props){
+                super(props)
+                this.state = {
+                    protein : "AAAAAAAAAAA"
+                }
+                this.handleChange = this.handleChange.bind(this)
+                this.handleSubmit = this.handleSubmit.bind(this)
+            }
+
+            handleChange(event){
+                this.setState({[event.target.name] : event.target.value})
+            }
+
+            handleSubmit(event){
+                console.log("hi")
+                fetch('http://localhost:3001/protein/embed', {
+                    method: 'POST',
+                    headers: new Headers({
+                        'Content-Type': 'application/json'
+                    }),
+                    body: JSON.stringify({'seq' : this.state.protein})
+                })
+                .then(function(response){
+                    return response.json()
+                })
+                .then(function(j){
+                    console.log(j)
+                })
+            }
+
+            render(){
+                return(
+                    <div className="col-sm-8 col-sm-offset-2 text-center">
+                        <div className="form-group">
+                            <input type="text" className="form-control input-lg text-center" name="protein" value={this.state.protein} onChange={this.handleChange}/>    
+                        </div>
+                        <button type="submit" className="btn btn-primary btn-lg" onClick={this.handleSubmit}>Embed</button>
+                    </div>
+                )
+            }
+        }
+
         ReactDOM.render(
-            <h1>Hello, world!</h1>,
+            <ProteinEmbed />,
             document.getElementById('root')
         )
     </script>
