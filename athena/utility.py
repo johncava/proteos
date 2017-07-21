@@ -1,4 +1,5 @@
 import pickle
+import numpy as np
 
 def load_obj(name ):
     with open( name + '.pkl', 'rb') as f:
@@ -7,18 +8,22 @@ def load_obj(name ):
 def initialize():
     return load_obj('protVec')
 
+def split(start, model, seq, lis):
+    for index in xrange(start,len(seq) - 2,3):
+        kmer = seq[index:index+3].encode('utf-8')
+        if kmer in model:
+            lis.append(np.array(model[kmer]))
+        else:
+            lis.append(np.array(model['<unk>']))
+    lis = np.mean(lis, axis=0).tolist()
+    return lis   
+
 def embedding(model, seq):
     first, second, third = [], [] , []
     #First Split
-    for index in xrange(0,len(seq) - 2,3):
-        print seq[index:index+3]
-        first.append(seq[index:index+3])
+    first = split(0, model, seq, first)
     #Second Split
-    for index in xrange(1,len(seq) - 2,3):
-        print seq[index:index+3]
-        second.append(seq[index:index+3])
+    second = split(1, model, seq, second)
     #Third Split
-    for index in xrange(2,len(seq) - 2,3):
-        print seq[index:index+3]
-        third.append(seq[index:index+3])
+    third = split(2, model, seq, third)
     return first, second, third
